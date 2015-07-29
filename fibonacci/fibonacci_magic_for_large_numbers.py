@@ -24,6 +24,6 @@ def f(n):
 
 if __name__ == "__main__":
     start = time()
-    print f(int(argv[1]))
+    print f(int(argv[1])-1)
     computation_time = time() - start
     print('\n\nCalculation time : ' + str(computation_time) + ' seconds')
