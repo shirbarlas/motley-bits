@@ -18,6 +18,30 @@ import sys
 import getopt
 
 
+class Person(object):
+
+    def __init__(self, name, group):
+        self._name = name
+        self._group = group
+
+    def __str__(self):
+        return str(self.name)
+
+    def __eq__(self, other):
+        return self.name == other.name and self.group == other.group
+
+    def __repr__(self):
+        return str(self._name)
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def group(self):
+        return self._group
+
+
 class SplitReviews(object):
 
     commiters = []
@@ -38,11 +62,16 @@ class SplitReviews(object):
         dummy_list = []
         with open(file_name, 'r') as fd:
             for line in fd:
-                if line.startswith('#'):
-                    continue
-                dummy_list.append(line.replace('\n', ''))
-
+                if not line.startswith('#') and line:
+                    dummy_list.append(self.create_person(line))
+        random.shuffle(dummy_list)
         return dummy_list
+
+    def create_person(self, line):
+        name, group = line.replace('\n', '').replace(' ', '').split(',')
+        return Person(name, group)
+
+
 
     def split_evenly_or_almost_evenly(self):
         random.shuffle(self.committers)
@@ -64,13 +93,14 @@ class SplitReviews(object):
         for reviewer, group_to_review in self.reviewers.items():
             print("%s to review %s" % (reviewer, group_to_review))
 
+
 def main(argv):
     committers = ''
     reviewers = ''
     try:
         if len(argv) == 0:
             raise getopt.GetoptError("No arguments given")
-        opts, args = getopt.getopt(argv,"hc:r:",["committers=","reviewers="])
+        opts, args = getopt.getopt(argv, "hc:r:", ["committers=", "reviewers="])
     except getopt.GetoptError:
         print 'split_reviewers.py -c <committers_file> -r <reviewers_file>'
         sys.exit(2)
@@ -89,5 +119,3 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-
-
