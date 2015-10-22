@@ -84,15 +84,18 @@ class SplitReviews(object):
         return Person(name, group)
 
     def print_reviewer_and_reviewee(self):
-        for reviewer in self.reviewers.keys():
+        for reviewer, reviewees in self.reviewers.items():
             if not (self.reviewers[reviewer]):
                 continue
-            review_list = '%s to review owner:%s' % (
-                reviewer, self.reviewers[reviewer].pop()
-                )
+            review_list = '%s to review %s' % (reviewer, reviewees)
+            review_link = 'https://code.engineering.redhat.com/gerrit/#/q/%s' % (
+                self.reviewers[reviewer].pop()
+            )
             while self.reviewers[reviewer]:
-                review_list += ' OR owner:%s' % self.reviewers[reviewer].pop()
-            print(review_list)
+                review_link += '+OR+owner:%s' % self.reviewers[reviewer].pop()
+            print review_list
+            print review_link
+            print
 
     def split_evenly_or_almost_evenly(self):
         random.shuffle(self.committers)
